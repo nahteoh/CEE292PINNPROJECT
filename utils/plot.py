@@ -71,7 +71,7 @@ def plot_prediction_det(save_dir, target, prediction, epoch, index,
                 cax = ax.imshow(samples[j], cmap=cmap, origin='upper',
                                 interpolation=interp, vmin=vmin_error, vmax=vmax_error)
         if plot_fn == 'contourf':
-            for c in cax.collections:
+            for c in getattr(cax, "collections", [cax]):  # FIX: .collections was removed in matplotlib 3.8+
                 c.set_edgecolor("face")
                 c.set_linewidth(0.000000000001)
         cbar = plt.colorbar(cax, ax=ax, fraction=0.046, pad=0.04,
@@ -152,7 +152,7 @@ def plot_prediction_det_animate2(save_dir, target, prediction, epoch, index, i_p
                 cax = ax.imshow(samples[j], cmap=cmap, origin='upper',
                                 interpolation=interp, vmin=vmin_error, vmax=vmax_error)
         if plot_fn == 'contourf':
-            for c in cax.collections:
+            for c in getattr(cax, "collections", [cax]):  # FIX: .collections was removed in matplotlib 3.8+
                 c.set_edgecolor("face")
                 c.set_linewidth(0.000000000001)
         cbar = plt.colorbar(cax, ax=ax, fraction=0.046, pad=0.04,
@@ -235,7 +235,7 @@ def plot_prediction_bayes2(save_dir, target, pred_mean, pred_var, epoch, index,
                     cax = ax.imshow(samples[i, j], cmap=cmap, origin='upper',
                                     interpolation=interp, vmin=vmin_error, vmax=vmax_error)
             if plot_fn == 'contourf':
-                for c in cax.collections:
+                for c in getattr(cax, "collections", [cax]):  # FIX: .collections was removed in matplotlib 3.8+
                     c.set_edgecolor("face")
                     c.set_linewidth(0.000000000001)
             cbar = plt.colorbar(cax, ax=ax, fraction=0.046, pad=0.04,
@@ -263,7 +263,7 @@ def save_stats(save_dir, logger, *metrics):
         metric_list = logger[metric]
         np.savetxt(save_dir + f'/{metric}.txt', metric_list)
         # plot stats
-        metric_arr = np.loadtxt(save_dir + f'/{metric}.txt')
+        metric_arr = np.atleast_1d(np.loadtxt(save_dir + f'/{metric}.txt'))  # FIX: atleast_1d so a 1-epoch run doesn't crash
         if len(metric_arr.shape) == 1:
             metric_arr = metric_arr[:, None]
         lines = plt.plot(range(1, len(metric_arr)+1), metric_arr)
@@ -320,7 +320,7 @@ def plot_prediction_bayes(save_dir, target, pred_mean, pred_var, epoch, index,
             for j, ax in enumerate(grid):
                 if plot_fn == 'contourf':
                     im = ax.contourf(data[j], 50, vmin=vmin, vmax=vmax, cmap=cmap)
-                    for c in im.collections:
+                    for c in getattr(im, "collections", [im]):  # FIX: .collections was removed in matplotlib 3.8+
                         c.set_edgecolor("face")
                         c.set_linewidth(0.000000000001)
                 elif plot_fn == 'imshow':
@@ -352,7 +352,7 @@ def plot_prediction_bayes(save_dir, target, pred_mean, pred_var, epoch, index,
             for j, ax in enumerate(grid):
                 if plot_fn == 'contourf':
                     im = ax.contourf(data[j], 50, cmap=cmap)
-                    for c in im.collections:
+                    for c in getattr(im, "collections", [im]):  # FIX: .collections was removed in matplotlib 3.8+
                         c.set_edgecolor("face")
                         c.set_linewidth(0.000000000001)
                 elif plot_fn == 'imshow':
@@ -420,7 +420,7 @@ def plot_MC(save_dir, monte_carlo, pred_mean, pred_var, mean, n_train):
                 # im = ax.imshow(data[j], vmin=vmin, vmax=vmax,
                 #                interpolation=interpolation, cmap=cmap)
                 im = ax.contourf(data[j], 50, vmin=vmin, vmax=vmax, cmap=cmap)
-                for c in im.collections:
+                for c in getattr(im, "collections", [im]):  # FIX: .collections was removed in matplotlib 3.8+
                     c.set_edgecolor("face")
                     c.set_linewidth(0.000000000001)
                 ax.set_axis_off()
@@ -449,7 +449,7 @@ def plot_MC(save_dir, monte_carlo, pred_mean, pred_var, mean, n_train):
             for j, ax in enumerate(grid):
                 # im = ax.imshow(data[j], interpolation=interpolation, cmap=cmap)
                 im = ax.contourf(data[j], 50, cmap=cmap)
-                for c in im.collections:
+                for c in getattr(im, "collections", [im]):  # FIX: .collections was removed in matplotlib 3.8+
                     c.set_edgecolor("face")
                     c.set_linewidth(0.000000000001)
                 ax.set_axis_off()
@@ -536,7 +536,7 @@ def plot_MC2(save_dir, monte_carlo, pred_mean, pred_var, mean, ntrain,
                     cax = ax.imshow(samples[i, j], cmap=cmap, origin='upper',
                                     interpolation=interp, vmin=vmin_error, vmax=vmax_error)
             if plot_fn == 'contourf':
-                for c in cax.collections:
+                for c in getattr(cax, "collections", [cax]):  # FIX: .collections was removed in matplotlib 3.8+
                     c.set_edgecolor("face")
                     c.set_linewidth(0.000000000001)
             cbar = plt.colorbar(cax, ax=ax, fraction=0.046, pad=0.04,
@@ -616,7 +616,7 @@ def plot_UP(save_dir, monte_carlo, surr_mean, is_mean,
                 cax = ax.imshow(samples[j], cmap=cmap, origin='upper',
                                 interpolation=interp, vmin=vmin_error, vmax=vmax_error)
         if plot_fn == 'contourf':
-            for c in cax.collections:
+            for c in getattr(cax, "collections", [cax]):  # FIX: .collections was removed in matplotlib 3.8+
                 c.set_edgecolor("face")
                 c.set_linewidth(0.000000000001)
         cbar = plt.colorbar(cax, ax=ax, fraction=0.046, pad=0.04,
@@ -716,7 +716,7 @@ def plot_row(arrs, save_dir, filename, same_range=False, plot_fn='imshow',
         elif plot_fn == 'contourf':
             cax = ax.contourf(arrs[i], 50, cmap=cmap, vmin=vmin, vmax=vmax)
         if plot_fn == 'contourf':
-            for c in cax.collections:
+            for c in getattr(cax, "collections", [cax]):  # FIX: .collections was removed in matplotlib 3.8+
                 c.set_edgecolor("face")
                 c.set_linewidth(0.000000000001)
         ax.set_axis_off()

@@ -102,3 +102,8 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# Project: large data and outputs (not uploaded)
+datasets/
+experiments/
+.DS_Store
